@@ -1,0 +1,10 @@
+function read_file(path: String) throws -> String {
+    mut file = File::open_for_reading(path)
+    let contents = file.read_all()
+    mut builder = StringBuilder::create()
+    for byte in contents.iterator() {
+        builder.append(byte)
+    }
+
+    return builder.to_string()
+}

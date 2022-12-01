@@ -1,0 +1,44 @@
+import utils { read_file }
+
+function split(anon x: String, anon y: u8) throws -> [String] {
+    mut result: [String] = []
+    mut current = StringBuilder::create()
+    for i in 0..(x.length()) {
+        let byte = x.byte_at(i)
+        if byte == y {
+            result.push(current.to_string())
+            current.clear()
+        } else {
+            current.append(byte)
+        }
+    }
+
+    result.push(current.to_string())
+    return result
+}
+
+function solution() throws {
+    let contents = read_file(path: "data/day1")
+    mut current_sum = 0u64
+    mut current_index = 0u64
+    mut max = 0u64
+
+    for line in split(contents, b'\n') {
+        defer current_index += 1
+        guard line != "" else {
+            if max < current_sum {
+                max = current_sum
+            }
+            current_sum = 0
+            continue
+        }
+
+        current_sum += line.to_uint()! as! u64
+    }
+
+    if max < current_sum {
+        max = current_sum
+    }
+
+    println("{}", max)
+}

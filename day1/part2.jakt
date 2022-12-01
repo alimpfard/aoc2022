@@ -1,0 +1,91 @@
+import utils { read_file }
+
+function split(anon x: String, anon y: u8) throws -> [String] {
+    mut result: [String] = []
+    mut current = StringBuilder::create()
+    for i in 0..(x.length()) {
+        let byte = x.byte_at(i)
+        if byte == y {
+            result.push(current.to_string())
+            current.clear()
+        } else {
+            current.append(byte)
+        }
+    }
+
+    result.push(current.to_string())
+    return result
+}
+
+// trait Reducable<T> {
+//     function reduce<Acc>(this, accumulator: Acc, anon f: &function(accumulator: Acc, value: &T) -> Acc) -> Acc
+// }
+
+function reduce<T, Acc>(self: &Array<T>, accumulator: Acc, anon f: &function(accumulator: Acc, value: &T) -> Acc) -> Acc {
+    mut acc = accumulator
+    mut i = 0uz
+    while i < self.size() {
+        acc = f(accumulator: acc, value: &self[i])
+        i += 1
+    }
+    return acc
+}
+
+function reduce<T>(self: &Array<T>, anon f: &function(accumulator: T, value: &T) -> T) -> T {
+    mut acc = self[0]
+    mut i = 1
+    while i < self.size() {
+        acc = f(accumulator: acc, value: &self[i])
+        i += 1
+    }
+    return acc
+}
+
+function max_top_n(into: &mut [u64], value: u64, count: i64) {
+    for i in 0..count {
+        if into[i] < value {
+            for j in (count - 1)..i {
+                into[j] = into[j - 1]
+            }
+            into[i] = value
+            break
+        }
+    }
+}
+
+function sum<T>(anon xs: Array<T>) -> T {
+    return reduce(
+        self: &xs
+        &function(accumulator: T, value: &T) => value + accumulator
+    )
+}
+
+function solution() throws {
+    let count = 3
+    let contents = read_file(path: "data/day1")
+
+    let v = reduce(
+        self: &split(contents, b'\n')
+        accumulator: ([0u64; count], 0u64)
+        &function(accumulator: ([u64], u64), value: &String) -> ([u64], u64) {
+            eprintln("value: {}, acc: {}", value, accumulator)
+            mut acc = accumulator
+            guard not value.is_empty() else {
+                max_top_n(into: &mut acc.0, value: acc.1, count)
+                acc.1 = 0
+                return acc
+            }
+
+            let c = value.to_uint()! as! u64
+            acc.1 += c
+            return acc
+        }
+    )
+
+    mut max = v.0
+    let current = v.1
+
+    max_top_n(into: &mut max, value: current, count)
+
+    println("{}", sum(max))
+}
