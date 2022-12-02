@@ -1,0 +1,68 @@
+import utils { read_file, reduce, split, split_no_throw }
+
+function solution() throws {
+    // A: Rock, B: Paper, C: Scissors
+    // X: Win, Y: Draw, Z: Lose
+    // score bonus: Rock=1, Paper=2, Scissors=3
+    // winning bonus = 6
+    // draw bonus = 3
+    let losing = [
+        "A": "C",
+        "B": "A",
+        "C": "B",
+    ]
+    let draw = [
+        "A": "A",
+        "B": "B",
+        "C": "C",
+    ]
+    let winning = [
+        "A": "B",
+        "B": "C",
+        "C": "A",
+    ]
+    let plays = [
+        "A": ["X": losing["A"], "Y": draw["A"], "Z": winning["A"]],
+        "B": ["X": losing["B"], "Y": draw["B"], "Z": winning["B"]],
+        "C": ["X": losing["C"], "Y": draw["C"], "Z": winning["C"]],
+    ]
+    let score = [
+        "winning": 6
+        "draw": 3
+        "losing": 0
+        "A": 1
+        "B": 2
+        "C": 3
+    ]
+    let lookup = [
+        "A": [
+            "X": score["losing"] + score[plays["A"]["X"]]
+            "Y": score["draw"] + score[plays["A"]["Y"]]
+            "Z": score["winning"] + score[plays["A"]["Z"]]
+        ],
+        "B": [
+            "X": score["losing"] + score[plays["B"]["X"]]
+            "Y": score["draw"] + score[plays["B"]["Y"]]
+            "Z": score["winning"] + score[plays["B"]["Z"]]
+        ],
+        "C": [
+            "X": score["losing"] + score[plays["C"]["X"]]
+            "Y": score["draw"] + score[plays["C"]["Y"]]
+            "Z": score["winning"] + score[plays["C"]["Z"]]
+        ],
+    ]
+    let total_score = reduce(
+        self: &split(read_file(path: "data/day2"), b'\n')
+        accumulator: 0i64
+        &function[lookup](accumulator: i64, value: String) -> i64 {
+            if value.is_empty() {
+                return accumulator
+            }
+
+            let s = split_no_throw(value, ' ')
+            return accumulator + lookup[s[0]][s[1]]
+        }
+    )
+
+    println("Total score with adjustments: {}", total_score)
+}

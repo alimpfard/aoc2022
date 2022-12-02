@@ -17,3 +17,6 @@
          return acc
      }
      ```
+- [day 2](day2)
+    - Functions overloading imported functions clash when the overloading modules are imported into the same module (without importing the functions themselves)
+    - `try expr` does not work anymore?
