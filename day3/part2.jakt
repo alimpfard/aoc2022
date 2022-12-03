@@ -1,0 +1,69 @@
+import utils { read_file, split }
+
+function byte_array(anon s: String) throws -> [u8] {
+    mut bytes: [u8] = []
+    for i in 0..s.length() {
+        bytes.push(s.byte_at(i))
+    }
+
+    return bytes
+}
+
+// function map<T, U>(anon self: &Array<T>, anon f: &function(anon x: &T) -> U) throws -> [U] {
+//     mut result: [U] = []
+//     for i in 0..self.size() {
+//         result.push(f(&self[i]))
+//     }
+
+//     return result
+// }
+
+function map(anon self: &Array<u8>) throws -> [i32] {
+    mut result: [i32] = []
+    for i in 0..self.size() {
+        let x = self[i]
+        result.push(match x {
+            (b'a'..b'z') => (x - b'a' + 1) as! i32
+            b'z' => 26 as! i32
+            (b'A'..b'Z') => (x - b'A' + 27) as! i32
+            b'Z' => 52 as! i32
+            else => 0
+        })
+    }
+
+    return result
+}
+
+function into_set(anon x: &ArraySlice<i32>) throws -> {i32} {
+    mut set: {i32} = {}
+    for a in *x {
+        set.add(a)
+    }
+
+    return set
+}
+
+function solution() throws {
+    mut sum = 0i32
+    mut all_items: [{i32}] = []
+    for line in split(read_file(path: "data/day3"), b'\n') {
+        let items = into_set(&map(byte_array(line))[..])
+        all_items.push(items)
+
+        if all_items.size() == 3 {
+            mut intersection: {i32} = {}
+            for a in all_items[0] {
+                if all_items[1].contains(a) and all_items[2].contains(a) {
+                    intersection.add(a)
+                }
+            }
+
+            for a in intersection {
+                sum += a
+            }
+
+            all_items = []
+        }
+    }
+    println("{}", sum)
+}

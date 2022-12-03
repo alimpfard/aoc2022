@@ -68,7 +68,6 @@ function solution() throws {
         self: &split(contents, b'\n')
         accumulator: ([0u64; count], 0u64)
         &function(accumulator: ([u64], u64), value: &String) -> ([u64], u64) {
-            eprintln("value: {}, acc: {}", value, accumulator)
             mut acc = accumulator
             guard not value.is_empty() else {
                 max_top_n(into: &mut acc.0, value: acc.1, count)

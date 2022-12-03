@@ -20,3 +20,9 @@
 - [day 2](day2)
     - Functions overloading imported functions clash when the overloading modules are imported into the same module (without importing the functions themselves)
     - `try expr` does not work anymore?
+- [day 3](day3)
+    - Generic functions are just broken, basically all attempts at implementing `map<T, U>` as either a free generic function or a trait lead to crashes
+    - `range.inclusive()` in match does not work ("expected u8, found u8..u8")
+    - Really need some niceties for sets, `Set::from_array()`, `Set::intersection()`, etc etc.
+    - `for foo in some_reference` does not work, it should auto-dereference the reference.
+    - I want `String::bytes()` to give me a nice iterable object, kthxbye.
