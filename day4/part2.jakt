@@ -1,0 +1,21 @@
+import utils { read_file, split }
+
+function solution() throws {
+    mut count = 0
+    for x in split(read_file(path: "data/day4"), b'\n') {
+        let parts = x.split(',')
+        let p = function[parts](anon i: i32) throws -> (i32, i32) {
+            let a = parts[i].split('-')
+            return (a[0].to_int()!, a[1].to_int()!)
+        }
+
+        let left = p(0)
+        let right = p(1)
+        // If there is any overlap, increment
+        if left.0 <= right.1 and left.1 >= right.0 {
+            count++
+        }
+    }
+
+    println("{}", count)
+}

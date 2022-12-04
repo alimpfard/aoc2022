@@ -26,3 +26,6 @@
     - Really need some niceties for sets, `Set::from_array()`, `Set::intersection()`, etc etc.
     - `for foo in some_reference` does not work, it should auto-dereference the reference.
     - I want `String::bytes()` to give me a nice iterable object, kthxbye.
+- [day 4](day4)
+    - Would be nice to get diagnostics on `println()` format/args mismatches
+    - that's it really
