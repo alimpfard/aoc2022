@@ -29,3 +29,10 @@
 - [day 4](day4)
     - Would be nice to get diagnostics on `println()` format/args mismatches
     - that's it really
+- [day 5](day5)
+    Absolute trainwreck, most notable:
+    - `String::replace()` just crashed, no idea why (called: `input.replace(replace: "    ", with: "--- ")`)
+    - No way to reverse an array, so I had to implement it myself
+        - `function reverse<T>(anon xs: &mut Array<T>)` -> gave me a typecheck error on `reverse(&mut some_array)` with `expected T, found u8` (missing reference support somewhere probs)
+    - `String::split()` still needs either a `keep_empty` parameter or support for splitting by a string
+    - `for (i, x) in foo.enumerate()` would be nice, getting tired of `defer i += 1`

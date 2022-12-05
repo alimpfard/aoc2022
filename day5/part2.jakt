@@ -1,0 +1,96 @@
+import utils { read_file, split }
+
+enum Mode {
+    ParseStuff
+    Move
+}
+
+function reverse<T>(anon mut xs: Array<T>) {
+    mut i = 0uz
+    mut j = xs.size() - 1
+    while i < j {
+        let tmp = xs[i]
+        xs[i] = xs[j]
+        xs[j] = tmp
+        i += 1
+        j -= 1
+    }
+}
+
+function solution() throws {
+    mut mode = Mode::ParseStuff
+    mut cranes: [[u8]] = []
+    for line in split(read_file(path: "data/day5"), b'\n') {
+        if line == "" {
+            mode = Mode::Move
+            // reverse inner crane arrays
+            for crane in cranes {
+                reverse(crane)
+            }
+            continue
+        }
+
+        match mode {
+            ParseStuff => {
+                if line.starts_with(" 1") {
+                    continue
+                }
+                mut space_run: usize = 0
+                mut lcranes: [u8] = []
+                for i in 0..line.length() {
+                    let b = line.byte_at(i)
+                    match b {
+                        b' ' => {
+                            space_run += 1
+                            if space_run == 4 {
+                                lcranes.push(0u8)
+                                space_run = 0
+                            }
+                        }
+                        b'[' | b']' => {
+                            space_run = 0
+                        }
+                        else => {
+                            space_run = 0
+                            lcranes.push(b)
+                        }
+                    }
+                }
+                for _ in cranes.size()..lcranes.size() {
+                    let arr: [u8] = []
+                    cranes.push(arr)
+                }
+
+                mut i = 0
+                for part in lcranes {
+                    defer i += 1
+                    if part == 0 {
+                        continue
+                    }
+                    cranes[i].push(part)
+                }
+            }
+            Move => {
+                let parts = line.split(' ')
+                let count = parts[1].to_uint()!
+                let from = parts[3].to_uint()!
+                let to = parts[5].to_uint()!
+                mut result: [u8] = []
+                for _ in 0..count {
+                    let part = cranes[from - 1].pop()!
+                    result.push(part)
+                }
+
+                reverse(result)
+                cranes[to - 1].push_values(result)
+            }
+        }
+    }
+
+    mut b = StringBuilder::create()
+    for crane in cranes {
+        b.append(crane.last()!)
+    }
+
+    println("{}", b.to_string())
+}
