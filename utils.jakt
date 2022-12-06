@@ -9,6 +9,11 @@ function read_file(path: String) throws -> String {
     return builder.to_string()
 }
 
+function read_file_bytes(path: String) throws -> [u8] {
+    mut file = File::open_for_reading(path)
+    return file.read_all()
+}
+
 function reduce<T, Acc>(self: &Array<T>, accumulator: Acc, anon f: &function(accumulator: Acc, value: &T) -> Acc) -> Acc {
     mut acc = accumulator
     mut i = 0uz

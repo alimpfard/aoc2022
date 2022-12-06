@@ -1,0 +1,67 @@
+import utils { read_file_bytes }
+
+struct WindowedIterator<U> implements(ThrowingIterable<[U]>) {
+    it: ArrayIterator<U>
+    window: [U]
+    size: usize
+    useless_member_for_inference: U
+
+    function next(mut this) throws -> [U]? {
+        if .window.size() < .size {
+            while .window.size() < .size {
+                let value = .it.next()
+                if value.has_value() {
+                    .window.push(value!)
+                } else {
+                    break
+                }
+            }
+        } else {
+            // Shift all elements to the left
+            for i in 0uz..(.window.size() - 1) {
+                .window[i] = .window[i + 1]
+            }
+
+            let value = .it.next()
+            if not value.has_value() {
+                return None
+            }
+            .window[.window.size() - 1] = value!
+        }
+
+        return .window
+    }
+}
+
+function all_different<T>(anon window: [T]) throws -> bool {
+    mut seen: {T} = {}
+    for value in window {
+        if seen.contains(value) {
+            return false
+        }
+        seen.add(value)
+    }
+    return true
+}
+
+function solution() throws {
+    mut i = 0uz
+    mut position: usize? = None
+
+    mut it = WindowedIterator(
+        it: read_file_bytes(path: "data/day6").iterator()
+        window: [0u8; 0]
+        size: 14
+        useless_member_for_inference: 0u8
+    )
+    for window in it {
+        defer i += 1
+        if all_different(window) {
+            println("All different: {}", window)
+            position = i + 14
+            break
+        }
+    }
+
+    println("Position: {}", position)
+}

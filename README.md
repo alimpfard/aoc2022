@@ -36,3 +36,7 @@
         - `function reverse<T>(anon xs: &mut Array<T>)` -> gave me a typecheck error on `reverse(&mut some_array)` with `expected T, found u8` (missing reference support somewhere probs)
     - `String::split()` still needs either a `keep_empty` parameter or support for splitting by a string
     - `for (i, x) in foo.enumerate()` would be nice, getting tired of `defer i += 1`
+- [day 6](day6)
+    - Inference based on struct members _requires_ a member exactly with the generic type, it fails if...say, `w: [T]` exists, but not `x: T`.
+    - `struct Foo<T, U requires(Iterable<T>)> { x: T, y: U }` passes inference, but infers the wrong type when trying to iterate: `for a in .y { ... }` infers `[T]?` for the type of `a`.
+    - `for x in it` assigns `it` to an immutable variable, so the `.next()` method can't be called unless `it` itself is mutable.
