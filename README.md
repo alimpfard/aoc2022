@@ -40,3 +40,11 @@
     - Inference based on struct members _requires_ a member exactly with the generic type, it fails if...say, `w: [T]` exists, but not `x: T`.
     - `struct Foo<T, U requires(Iterable<T>)> { x: T, y: U }` passes inference, but infers the wrong type when trying to iterate: `for a in .y { ... }` infers `[T]?` for the type of `a`.
     - `for x in it` assigns `it` to an immutable variable, so the `.next()` method can't be called unless `it` itself is mutable.
+- [day 7](day7)
+    - Generic functions still very buggy (writing `walk<T>` just crashed the compiler)
+    - `[String:SomeClassType]` is broken, I patched it locally to allow `.get()`, but the design of HashMap means we will _never_ be able to hand out `NNRP<T>&` as we don't even have an NNRP object to hand out - this used to be (still is?) an AK limitation too, we just avoided `operator[]` in there mostly - should `operator[]` in Jakt just invoke `.get().value()` instead?
+    - Mutable captures in lambdas
+    - Captures in lambdas in general, lambdas shouldn't inherit their parent block scope (they should inherit the immediate parent of the deepest _function_ scope)
+    - `x ?? y` should pass `type_hint: x.type()` (or `unwrap_optional(x.type())`) to `typecheck(y)` - maybe we need a way to specify multiple type hints?
+    - Some nice functional-style stuff is really in demand right now, you can't possibly expect me to implement `reduce` a million times!
+    - There's some confusion between `&mut foo`, `&foo` and `foo` - the compiler just blindly allows them through...?
