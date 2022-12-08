@@ -24,6 +24,16 @@ function reduce<T, Acc>(self: &Array<T>, accumulator: Acc, anon f: &function(acc
     return acc
 }
 
+function reduce_throw<T, Acc>(self: &Array<T>, accumulator: Acc, anon f: &function(accumulator: Acc, value: &T) throws -> Acc) throws -> Acc {
+    mut acc = accumulator
+    mut i = 0uz
+    while i < self.size() {
+        acc = f(accumulator: acc, value: &self[i])
+        i += 1
+    }
+    return acc
+}
+
 function split(anon x: String, anon y: u8) throws -> [String] {
     mut result: [String] = []
     mut current = StringBuilder::create()

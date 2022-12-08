@@ -1,0 +1,110 @@
+import utils { read_file, split, reduce_throw }
+
+function map<T, U>(anon xs: Array<T>, anon f: &function(anon x: T) throws -> U) throws -> [U] {
+    mut ys: [U] = []
+    for x in xs {
+        ys.push(f(x))
+    }
+    return ys
+}
+
+function transpose<T>(anon xs: [[T]]) throws -> [[T]] {
+    mut ys: [[T]] = []
+    for i in 0..xs[0].size() {
+        mut row: [T] = []
+        for j in 0..xs.size() {
+            row.push(xs[j][i])
+        }
+        ys.push(row)
+    }
+    return ys
+}
+
+function check(mut acc: [[bool]], x: &[u8]) throws {
+    mut row_results: [bool] = [false; x.size()]
+    mut max_seen: u8? = None
+    for i in 0..x.size() {
+        if not max_seen.has_value() or x[i] > max_seen! {
+            row_results[i] = true
+            max_seen = x[i]
+        }
+    }
+    max_seen = None
+    for i in ((x.size() - 1)..0).inclusive() {
+        if not max_seen.has_value() or x[i] > max_seen! {
+            row_results[i] = true
+            max_seen = x[i]
+        }
+    }
+
+    acc.push(row_results)
+}
+
+function flat<V>(anon xs: [[V]]) throws -> [V] {
+    mut ys: [V] = []
+    for x in xs {
+        for y in x {
+            ys.push(y)
+        }
+    }
+    return ys
+}
+
+function or_zip<T>(anon xs: [T], anon ys: [T]) throws -> [T] {
+    mut zs: [T] = []
+    for i in 0..xs.size() {
+        zs.push(xs[i] or ys[i])
+    }
+    return zs
+}
+
+function count<T>(anon xs: [T], anon y: T) -> usize {
+    mut count = 0uz
+    for x in xs {
+        if x == y {
+            count += 1
+        }
+    }
+    return count
+}
+
+function solution() throws {
+    let rows = map(split(read_file(path: "data/day8"), b'\n'), &function(anon row: String) throws -> [u8] {
+        mut xs: [u8] = []
+        for i in 0..row.length() {
+            xs.push(row.byte_at(i) - b'0')
+        }
+        return xs
+    })
+    let transposed = transpose(rows)
+
+    // Look rowwise
+    mut accumulator: [[bool]] = []
+    let rowwise = reduce_throw(
+        self: &rows
+        accumulator
+        &function(anon acc: [[bool]], anon x: &[u8]) throws -> [[bool]] {
+            mut macc = acc
+            check(acc: macc, x)
+            return macc
+        }
+    )
+
+    accumulator = []
+    let colwise = transpose(reduce_throw(
+        self: &transposed
+        accumulator
+        &function(anon acc: [[bool]], anon x: &[u8]) throws -> [[bool]] {
+            mut macc = acc
+            check(acc: macc, x)
+            return macc
+        }
+    ))
+
+    // println("{}", rowwise)
+    // println("{}", colwise)
+
+    let fr = flat(rowwise)
+    let fc = flat(colwise)
+    println("{}", count(or_zip(fr, fc), true))
+}

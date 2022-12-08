@@ -48,3 +48,7 @@
     - `x ?? y` should pass `type_hint: x.type()` (or `unwrap_optional(x.type())`) to `typecheck(y)` - maybe we need a way to specify multiple type hints?
     - Some nice functional-style stuff is really in demand right now, you can't possibly expect me to implement `reduce` a million times!
     - There's some confusion between `&mut foo`, `&foo` and `foo` - the compiler just blindly allows them through...?
+- [day 8](day8)
+    Sat down and fixed any issues that came up instead of writing a list of them, so...that's it! just one issue:
+    - Sometimes nesting calls to generic functions causes the compiler to define their type vars in the same scope, this is incorrect, but I don't know where the issue is.
+
