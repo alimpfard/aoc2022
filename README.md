@@ -51,4 +51,11 @@
 - [day 8](day8)
     Sat down and fixed any issues that came up instead of writing a list of them, so...that's it! just one issue:
     - Sometimes nesting calls to generic functions causes the compiler to define their type vars in the same scope, this is incorrect, but I don't know where the issue is.
+- [day 9](day9)
+    First day solved after the big AK + Jakt update, went smoothly!
+    - Types later inferred in a call are not used to resolve existing arguments, this is difficult to solve, but is insanely annoying:
+        ```jakt
+        function foo<U>(x: [U], y: U) { ... }
 
+        foo(x: [], y: 10) // x should be checked as [i64], but it's checked as [U].
+        ```
