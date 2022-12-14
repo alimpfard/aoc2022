@@ -1,0 +1,125 @@
+import utils { read_file, split }
+
+function abs(anon x: i64) -> i64 {
+    if x < 0 {
+        return -x
+    }
+    return x
+}
+
+function sign(anon x: i64) -> i64 {
+    if x < 0 {
+        return -1
+    }
+    if x > 0 {
+        return 1
+    }
+    return 0
+}
+
+struct WindowedIterator<U> implements(ThrowingIterable<[U]>) {
+    it: ArrayIterator<U>
+    window: [U]
+    size: usize
+    useless_member_for_inference: U
+
+    function next(mut this) throws -> [U]? {
+        if .window.size() < .size {
+            while .window.size() < .size {
+                let value = .it.next()
+                if value.has_value() {
+                    .window.push(value!)
+                } else {
+                    break
+                }
+            }
+        } else {
+            // Shift all elements to the left
+            for i in 0uz..(.window.size() - 1) {
+                .window[i] = .window[i + 1]
+            }
+
+            let value = .it.next()
+            if not value.has_value() {
+                return None
+            }
+            .window[.window.size() - 1] = value!
+        }
+
+        return .window
+    }
+}
+
+struct Grid {
+    visited: {String}
+
+    function apply_position_diff(
+        mut this
+        head_position: &mut (i64, i64)
+        tail_position: &mut (i64, i64)
+        dx: i64
+        dy: i64
+    ) throws {
+        head_position.0 += dx
+        head_position.1 += dy
+
+        let y = abs(head_position.1 - tail_position.1)
+        let x = abs(head_position.0 - tail_position.0)
+
+        if y > 1 {
+            if x == 1 {
+                tail_position.0 += sign(head_position.0 - tail_position.0)
+            }
+            tail_position.1 += sign(head_position.1 - tail_position.1)
+        }
+
+        if x > 1 {
+            if y == 1 {
+                tail_position.1 += sign(head_position.1 - tail_position.1)
+            }
+
+            tail_position.0 += sign(head_position.0 - tail_position.0)
+        }
+    }
+}
+
+function solution() throws {
+    mut head_position = (0, 0)
+    mut tail_positions = [head_position; 9]
+    mut visited = Grid(visited: {"0.0"})
+
+    for line in split(read_file(path: "data/day9"), b'\n') {
+        let parts = split(line, b' ')
+
+        let direction = parts[0]
+        let count = parts[1].to_int()!
+
+        let (dx, dy) = match direction {
+            "R" => (1, 0)
+            "L" => (-1, 0)
+            "U" => (0, 1)
+            "D" => (0, -1)
+            else => (0, 0)
+        }
+
+        for _ in 0..count {
+            let window: [(i64, i64)] = []
+            mut it = WindowedIterator(
+                it: tail_positions.iterator()
+                window
+                size: 2
+                useless_member_for_inference: (0i64, 0i64)
+            )
+
+            visited.apply_position_diff(&mut head_position, tail_position: &mut tail_positions[0], dx, dy)
+
+            for i in 1..tail_positions.size() {
+                visited.apply_position_diff(head_position: &mut tail_positions[i - 1], tail_position: &mut tail_positions[i], dx: 0, dy: 0)
+            }
+
+            visited.visited.add(format("{}.{}", tail_positions.last()!.0, tail_positions.last()!.1))
+        }
+    }
+
+    eprintln("visited: {}", visited.visited.size())
+}

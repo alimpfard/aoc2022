@@ -1,0 +1,7 @@
+import day9::part1 as p1
+import day9::part2 as p2
+
+function main() {
+    p1::solution()
+    p2::solution()
+}
