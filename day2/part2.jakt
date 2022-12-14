@@ -54,12 +54,12 @@ function solution() throws {
     let total_score = reduce(
         self: &split(read_file(path: "data/day2"), b'\n')
         accumulator: 0i64
-        &function[lookup](accumulator: i64, value: String) -> i64 {
+        &function[lookup](accumulator: i64, value: &String) -> i64 {
             if value.is_empty() {
                 return accumulator
             }
 
-            let s = split_no_throw(value, ' ')
+            let s = split_no_throw(*value, ' ')
             return accumulator + lookup[s[0]][s[1]]
         }
     )

@@ -46,7 +46,7 @@ function into_set(anon x: &ArraySlice<i32>) throws -> {i32} {
 function solution() throws {
     mut sum = 0i32
     for line in split(read_file(path: "data/day3"), b'\n') {
-        let items = map(byte_array(line))
+        let items = map(&byte_array(line))
 
         let left = into_set(&items[0..(items.size() / 2)])
         let right = into_set(&items[(items.size() / 2)..items.size()])

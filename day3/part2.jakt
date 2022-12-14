@@ -47,7 +47,7 @@ function solution() throws {
     mut sum = 0i32
     mut all_items: [{i32}] = []
     for line in split(read_file(path: "data/day3"), b'\n') {
-        let items = into_set(&map(byte_array(line))[..])
+        let items = into_set(&map(&byte_array(line))[..])
         all_items.push(items)
 
         if all_items.size() == 3 {

@@ -82,7 +82,7 @@ function solution() throws {
                 }
 
                 reverse(result)
-                cranes[to - 1].push_values(result)
+                cranes[to - 1].push_values(&result)
             }
         }
     }
